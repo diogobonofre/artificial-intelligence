@@ -25,3 +25,8 @@ Sources that I personally find useful to learn artificial intelligence.
 - [An Introduction to Statistical Learning: With Applications in Python](https://a.co/d/090cf591)
 - [Practical Statistics for Data Scientists: 50+ Essential Concepts Using R and Python](https://a.co/d/0ax5oI2g)
 - [Why Machines Learn: The Elegant Math Behind Modern AI](https://a.co/d/04SXUAOI)
+- [Neural Networks From Scratch](https://nnfs.io) 
+
+## TODO
+- [ ] Transcribe scripts in `libraries` to Jupyter Notebooks
+- [ ] Adjust some of the header comments in `.py` files
