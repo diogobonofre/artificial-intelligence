@@ -1,0 +1,172 @@
+* Inbox
+** [2026-08-13 Thu 13:59] What is recursion and how to use it
+Recursion is a good example of a divide-and-conquer approach.
+
+A joke about recursion
+Q: How many twists does it take to screw in a light bulb?
+A: Is it already screwed in? Then zero. If not, then twist it once, ask me again, and add 1 to my answer.
+
+In order to avoid infinity recursion, we must ensure that we have one or more base cases that solve the problem for simple cases.
+
+In practice, recursion is just a function that call itself. But, as we update state variables in iterative algorithms, we should also, at each recursive call to the function, simplify the inputs given.
+
+*** The multiplication iterative vs. recursive solution
+The multiplication a*b is just adding a to itself b times.
+#+begin_src python
+def iterative_multiplication(a: float, b: float) -> float:
+    result = 0
+    while b > 0:
+        result += a
+        b -= 1
+    return result
+#+end_src
+
+*Applying recursion*: Think how to reduce the problem to a simpler/smaller version of the same problem.
+
+#+begin_src
+a*b = { a + a + a + a + a + ... + a } -- this represent b times
+    = a + { a + a + a + a + ... + a } -- this represents b-1 times
+    = a + { a*(b-1) } -- this ALSO represent b-1 times
+#+end_src
+
+*Base case*: Keep reducing the problem until reach a simple case that be solved directly. When $b = 1$, $a*b = a$.
+
+The basic algorithm to solve this can be expressed by:
+#+begin_src python
+def recursive_multiplication(a: float, b: float) -> float:
+    if b == 1:
+        return a
+    else:
+        return a + recursive_multiplication(a, b - 1)
+#+end_src
+
+But this implementation falls into infinity recursion in edge cases, e.g.:
+a. b is equal to zero (b=0)
+b. b is a negative number (b<0)
+
+Why this happens? Well, if we just continue to decrease the value of b by 1 starting from any value <= 0, it will never reach our base case where b=1. Infinity recursion.
+
+- *Solving the a. case:* This is simple to solve, we just need to modify our base case to b=0 and that's it.
+
+  Why it works? Because when b=1 it will just be caught in the ~return a + recursive_multiplication(a, b-1)~, and evaluating ~if b == 0:~ to TRUE and returning 0. Substituting on the previous expression we will have ~return a + 0~ that's equal to ~a~.
+
+- *Solving the b. case:* Here we will need to catch every case where ~b < 0~ and treat these specially with a different expression: ~return -recursive_multiplication(a, -b)~.
+
+  Why it works? Because if b = -3, then -b = -(-3) = 3. So, calling ~recursive_multiplication(a, -b)~ calculates a*|b|. We need b to be positive during this step of the algorithm so our existing addition logic works.
+
+  To correct the final sign we just need to put a negative sign in front of the whole recursive call. It will be evaluated only after all the ~recursive_multiplication(a, -b)~ calls end.
+
+Final algorithm for multiplication solving for b<=0:
+#+begin_src python
+def recursive_multiplication(a: float, b: float) -> float:
+    if b == 0:
+        return 0
+    elif b < 0:
+        return -recursive_multiplication(a, -b)
+    else:
+        return a + recursive_multiplication(a, b - 1)
+#+end_src
+
+*** Solving factorials by recursion
+A generic factorial of a number n, for example, can be expressed as:
+
+$$n! = n*(n-1)*(n-2)*(n-3)*...*1$$
+
+For what n we know the factorial?
+$n = 1$ → ~if n == 1: return 1~ (base case)
+
+How to reduce the problem? Rewrite in terms of something simpler to reach base case.
+$n*(n-1)!$ → ~else: return n*factorial(n-1)~ (recursive step)
+
+#+begin_src python
+def fact(n):
+    if n == 1:
+        return 1
+    else:
+        return n*fact(n-1)
+#+end_src
+
+*** Observations about recursion
+a. Each recursive call to a function creates its *own scope/environment*
+b. *Binding of variables* in a scope are not changed by recursive call
+c. Flow of control passes back to *previous scope* once function call returns value
+
+*** Inductive reasoning
+How do we know that our recursive code will work?
+
+Let's analyze this case against a iterative algorithm:
+#+begin_src python
+def mult_iter(a, b):
+    result = 0
+    while b > 0:
+        result += a
+        b -= 1
+    return result
+#+end_src
+1) ~mult_iter~ terminates because b is initially positive and decreases by 1 each time around loop; thus must eventually become less than 1
+
+#+begin_src python
+def mult_rec(a, b):
+    if b == 1:
+        return a
+    else:
+        return a + mult_rec(a, b-1)
+#+end_src
+1) ~mult_rec~ called with ~b=1~ has no recursive call and stops
+2) ~mult_rec~ called with ~b>1~ makes a recursive call with smaller version of ~b~; must eventually reach call with ~b=1~
+
+**** Example of Induction
+A) 0 + 1 + 2 + 3 + ... + n = (n(n+1))/2
+B) /Proof:/
+   + If n=0, then LHS is 0 and RHS is 0*1/2, so TRUE
+   + Assume TRUE for some k, then need to show that
+     0 + 1 + 2 + ... + k + (k+1) = ((k+1)(k+2))/2
+     - LHS is k(k+1)/2 + (k+1) by assumption that property holds for problems of size k
+     - This becomes, by algebra, ((k+1)(k+2))/2
+
+**** Applying to code
+On the ~mult_rec~ function:
+A) For the base case we can show that ~mult_rec~ must return the correct answer (e.g. if b=1, then a*b=a);
+B) For the recursive case, we can assume that ~mult_rec~ correctly returns an answer for problems of size smaller than b, then by the addition step, it must also return a correct answer for problem size b
+
+*** Solving Tower of Hanoi by Recursion
+#+begin_src python
+def print_move(fr, to) -> None:
+    print(f"move from {fr} to {to}")
+
+
+def towers(n, fr, to, spare) -> None:
+    if n == 1:
+        print_move(fr, to)
+    else:
+        towers(n - 1, fr, spare, to)
+        towers(1, fr, to, spare)
+        towers(n - 1, spare, to, fr)
+#+end_src
+This is a very elegant way of solving the puzzle.
+
+Algorithmically it's correct, but does not solve for edge cases like n=0 or n=-2.
+
+*** Modelling Fibonacci's Sequence Recursively (Recursion with multiple base cases)
+/Fibonnaci numbers:/
+1) Newborn pair of rabbits (one female, one male) are put in a pen
+2) Rabbits mate at age of one month
+3) Rabbits have a one month gestation period
+4) Assume rabbits never die, that female always produces one new pair (one male, one female) every month from it's second month on
+5) How many female rabbits are there at the end of one year?
+
+#+begin_src python
+def fib(x: int) -> int:
+    """Assumes x is an int >= 0"""
+    if x == 0 or x == 1:
+        return 1
+    else:
+        return fib(x - 1) + fib(x - 2)
+#+end_src
+
+*** Applying recursion to non-numeric data
+
+*** References
+1) [[https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/][Introduction to Computer Science and Programming in Python | Electrical Engin...]]
+2) [[https://www.youtube.com/watch?v=WPSeyjX1-4s][6. Recursion and Dictionaries - YouTube]]
+3) [[file:python/03_recursive_algorithms.py]]
