@@ -1,3 +1,6 @@
+from functools import cache
+
+
 def iterative_multiplication(a: int, b: int) -> int:
     result = 0
     while b > 0:
@@ -45,3 +48,23 @@ def fib(x: int) -> int:
         return 1
     else:
         return fib(x - 1) + fib(x - 2)
+
+
+# Solving Fibonnaci's Sequence efficiently with dictionary
+def fib_dict(n: int, d: dict = {1: 1, 2: 2}):
+    if n in d:
+        return d[n]
+    else:
+        ans = fib_dict(n - 1, d) + fib_dict(n - 2, d)
+        d[n] = ans
+        return ans
+
+
+@cache
+def fib_dict_cache(n: int, d: dict = {1: 1, 2: 2}):
+    if n in d:
+        return d[n]
+    else:
+        ans = fib_dict(n - 1, d) + fib_dict(n - 2, d)
+        d[n] = ans
+        return ans

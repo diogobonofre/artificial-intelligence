@@ -1,5 +1,5 @@
 # EXERCISE
-# Program an interative binary search that solves for the 3 sets defined here.
+# Program a iterative binary search that solves for the 3 sets defined here.
 arr1 = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
 arr2 = [2, 3, 4, 10, 40]
 arr3 = [1, 2, 3, 4, 5]

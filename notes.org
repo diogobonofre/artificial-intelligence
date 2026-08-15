@@ -29,7 +29,7 @@ a*b = { a + a + a + a + a + ... + a } -- this represent b times
     = a + { a*(b-1) } -- this ALSO represent b-1 times
 #+end_src
 
-*Base case*: Keep reducing the problem until reach a simple case that be solved directly. When $b = 1$, $a*b = a$.
+*Base case*: Keep reducing the problem until reach a simple case that be solved directly. When b=1, a*b=a.
 
 The basic algorithm to solve this can be expressed by:
 #+begin_src python
@@ -164,9 +164,47 @@ def fib(x: int) -> int:
         return fib(x - 1) + fib(x - 2)
 #+end_src
 
+**** Implementing Efficient Fibonacci Using Dictionary
+#+begin_src python
+def fib_dict(n: int, d: dict) -> dict:
+    if n in d:
+        return d[n]
+    else:
+        ans = fib_dict(n-1, d) + fib_dict(n-2, d)
+        d[n] = ans
+        return ans
+#+end_src
+
 *** Applying recursion to non-numeric data
+**** Detecting palindromes with recursion
+#+begin_quote
+"Are we not drawn onward, we few, drawn onward to new era?" — Anne Michaels
+#+end_quote
+
+A) First, convert the string to just characters, by striping out punctuation, and converting upper case to lower case
+B) Then
+   + /Base case:/ a string of lenght 0 or 1 is a palindrome
+   + /Recursive case:/ if first character matches last character, then is a palindrome if middle section is a palindrome
+
+#+begin_src python
+def is_palindrome(s: str) -> bool:
+
+    def to_chars(s: str) -> str:
+        s = s.lower()
+        ans = ''
+        for c in s:
+            if c in 'abcdefghijklmnopqestuvwxyz':
+                ans = ans + cA
+        return ans
+
+    def is_pal(s: str) -> str:
+        if len(s) <= 1: return True
+        else: return s[0] == s[-1] and is_pal(s[1:-1])
+
+    return is_pal(to_chars(s))
+#+end_src
 
 *** References
 1) [[https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/][Introduction to Computer Science and Programming in Python | Electrical Engin...]]
 2) [[https://www.youtube.com/watch?v=WPSeyjX1-4s][6. Recursion and Dictionaries - YouTube]]
-3) [[file:python/03_recursive_algorithms.py]]
+3) [[file:python/recursive_algorithms.py]]
