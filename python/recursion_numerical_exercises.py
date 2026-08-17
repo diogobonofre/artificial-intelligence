@@ -68,11 +68,20 @@ def _harm_series_sum_rec(n: int) -> float:
 
 
 # 6) Write a Python program to calculate the geometric sum up to n terms
+# Finite Geometric Series expression:
+# a + ar + ar^(2) + ar^(3) + ... + ar^(n) = Σ, k=0 → n, ar^(k)
+#
+# For r≠1, the sum of a finite geometric series Sn starting from 0th term up to
+# nth term is formulated as:
+# Sn=a(1-r^(n+1))/1-r
+#
+# Reference: https://en.wikipedia.org/wiki/Geometric_series
 def geo_series_sum_rec(a: float, r: float, k: int) -> float:
-    if k < 0:
-        return 0
-    return a * (r**k) + geo_series_sum_rec(a, r, k - 1)
+    if k < 0: return 0
+    return a*(r**k) + geo_series_sum_rec(a, r, k-1)
 
+# Let a=1, r=2, k=5 the final expression to be evaluated will be:
+# 1*(2**5) + 1*(2**3) = 40
 
 # Reference:
 # https://www.w3resource.com/python-exercises/data-structures-and-algorithms/python-recursion.php
